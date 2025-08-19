@@ -3,6 +3,7 @@ FastMCP Echo Server
 """
 
 from fastmcp import FastMCP
+from src.morpho_helper import get_vault_data
 
 # Create server
 mcp = FastMCP("Echo Server")
@@ -28,3 +29,15 @@ def echo_template(text: str) -> str:
 @mcp.prompt("echo")
 def echo_prompt(text: str) -> str:
     return text
+
+
+@mcp.resource("morpho://vaults", mime_type="application/json")
+def vault_data_resource() -> dict:
+    """Fetch vault data from Morpho API"""
+    try:
+        return get_vault_data()
+    except Exception as e:
+        return str(e)
+
+if __name__ == "__main__":
+    mcp.run(transport="http")
